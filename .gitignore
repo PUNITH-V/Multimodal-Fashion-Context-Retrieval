@@ -1,0 +1,25 @@
+# Virtual Environments
+venv/
+env/
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Data & Assets (Do not upload thousands of images or huge JSONs)
+data/raw_images_deepfashion/
+data/raw_images_supplements/
+data/manifest.json
+data/deepfashion_meta.json
+
+# Generated Vector Database (ChromaDB)
+vector_store/
+
+# Generated Evaluation Images
+evaluation_results.png
+
+# OS files
+.DS_Store
+Thumbs.md
