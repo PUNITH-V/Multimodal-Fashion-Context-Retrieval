@@ -86,4 +86,25 @@ Adaptive Weighted Fusion
 Ranked Results
 ```
 
-See [`design_decisions.md`](design_decisions.md) for the reasoning behind these choices and what I'd still want to fix.
+## A few of the choices explained
+
+**FashionCLIP over plain CLIP** — vanilla CLIP does image-text retrieval fine in general, but fashion has a lot of fine-grained distinctions general training data doesn't emphasize (fit, garment type, fabric). FashionCLIP is trained on fashion-domain pairs, so it's just better at this without needing to fine-tune anything myself.
+
+**Late fusion over a joint model** — a joint cross-encoder would probably handle tricky compositional queries better, but it's a lot more compute and complexity than made sense for a project at this stage. Late fusion also made debugging easier, since I could look at image-side and caption-side scores separately when something looked off.
+
+**ChromaDB over something bigger** — didn't need distributed infrastructure for a dataset this size. Persistent local storage plus HNSW indexing with basically no setup overhead was the right call here.
+
+## Where it actually breaks
+
+**Attribute binding.** Because attributes get extracted per-prompt independently rather than jointly over the whole query, something like "red tie and white shirt" can get muddled — the system doesn't always keep track of which color goes with which garment, so it can behave more like it searched for "red shirt." I don't think this is fully solvable without query decomposition or a model that reasons over compositional structure directly.
+
+**Environment recognition.** Limited to whatever's in the prompt bank — if someone searches for a setting I didn't anticipate, it just won't be recognized.
+
+**No joint reasoning.** The late fusion setup never reasons about image and text together in a single pass, just computes two scores and adds them. That caps how well it handles genuinely ambiguous or highly compositional queries.
+
+## What I'd do next
+
+- Query decomposition — split a compositional query like "red tie, white shirt" into sub-parts and score them more carefully
+- Cross-encoder reranking on top of the current retriever (something like BLIP-2) to clean up the top results
+- Swap in a proper scene-recognition model (Place365 or similar) instead of a fixed prompt list for environment detection
+- Move off ChromaDB to something distributed if this ever needed to handle a much bigger dataset
