@@ -60,8 +60,9 @@ for i in tqdm(range(0, len(items), batch_size)):
             metadata = {
                 "image_path": data["image_path"],
                 "image_vector": img_vec.tolist(),
-                # Store attributes as a comma-separated string for easy searching
-                "attributes": ", ".join(data.get("attributes", [])),
+                # FIX: Use the correct keys that match the manifest
+                "colors": ", ".join(data.get("colors", [])),
+                "clothing_type": ", ".join(data.get("clothing_type", [])),
                 "environment": data.get("environment", "unknown"),
                 "source": data.get("source", "unknown")
             }
