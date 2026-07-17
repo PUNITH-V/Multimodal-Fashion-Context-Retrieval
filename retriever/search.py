@@ -67,7 +67,9 @@ def search(query, k=5):
             "img_sim": img_sim,
             "cap_sim": cap_sim,
             "environment": meta.get("environment", "unknown"),
-            "colors": meta.get("colors", "unknown")
+            # FIX: Read the correct key
+            "colors": meta.get("colors", "unknown"),
+            "clothing_type": meta.get("clothing_type", "unknown")
         })
     
     # Step 4: Sort by Fused Score and return Top K
